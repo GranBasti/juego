@@ -2,7 +2,7 @@ import pygame
 
 import constantes
 from personaje import Personaje
-
+from weapon import Weapon
 
 pygame.init()
 
@@ -10,12 +10,42 @@ pygame.init()
 #ancho = 800
 #alto = 600
 
-ventana = pygame.display.set_mode((constantes.ANCHO_VENTANA, constantes.ALTO_VENTANA))
+ventana = pygame.display.set_mode((constantes.ANCHO_VENTANA,
+                                   constantes.ALTO_VENTANA))
 
 #Cambiar el nombre de la ventana
 pygame.display.set_caption("Mi primer juego")
 
-jugador = Personaje(100,100)
+def escalar_img(image, scale):
+    w = image.get_width()
+    h = image.get_height()
+    nueva_imagen = pygame.transform.scale(image, (w*scale, h*scale))
+    return nueva_imagen
+
+
+#Importar imagenes
+
+#Personaje
+animaciones = []
+for i in range (8):
+    img = pygame.image.load(f"assets//images//characters//player//Run_{i}.png").convert_alpha()
+    ima = escalar_img(img, constantes.SCALA_PERSONAJE)
+    animaciones.append(img)
+
+#Arma
+imagen_shuriken = pygame.image.load(f"assets//images//weapons//01.png").convert_alpha()
+imagen_shuriken = escalar_img(imagen_shuriken, constantes.SCALA_ARMA)
+
+
+player_image = pygame.image.load("assets/images/characters/player/Run_0.png")
+#Para scalar el Asset
+player_image = escalar_img(player_image, constantes.SCALA_PERSONAJE)
+
+#Crear un jugador de la clase Personaje
+jugador = Personaje(50,50, animaciones)
+
+#Crear un arma de la clase Weapon
+shuriken = Weapon(imagen_shuriken)
 
 
 #Definir las variable de movimiento del jugador
@@ -56,9 +86,17 @@ while run:
     #Mover el jugador
     jugador.movimiento(delta_x, delta_y)
 
+    #Actualiza el estado jugador
+    jugador.update()
 
+    #Actualizar el estado del arma
+    shuriken.update(jugador)
+
+    #Dibujar al jugador
     jugador.dibujar(ventana)
 
+    #Dibujar el arma
+    shuriken.dibujar(ventana)
 
     for event in pygame.event.get():
         #Para cerrar el juego
