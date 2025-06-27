@@ -5,13 +5,18 @@ import constantes
 import math
 
 class Weapon():
-    def __init__(self, image):
+    def __init__(self, image, imagen_bala):
+        self.imagen_bala = imagen_bala
         self.imagen_original = image
         self.angulo = 0
         self.imagen = pygame.transform.rotate(self.imagen_original, self.angulo)
         self.forma = self.imagen.get_rect()
+        self.disparada = False
+        self.ultimo_disparo = pygame.time.get_ticks()
 
     def update(self, personaje):
+        disparo_cooldown = constantes.COOLDOWN_BALAS
+        bala = None
         self.forma.center = personaje.forma.center
         if personaje.flip == False:
             self.forma.x = self.forma.x + personaje.forma.width/2.5
@@ -30,6 +35,21 @@ class Weapon():
 
         #print(self.angulo)
 
+
+        #Detectar los click del mouse
+        if pygame.mouse.get_pressed()[0] and self.disparada == False and(pygame.time.get_ticks()
+        - self.ultimo_disparo >= disparo_cooldown):
+            bala = Bullet(self.imagen_bala, self.forma.centerx, self.forma.centery,
+                          self.angulo)
+            self.disparada = True
+            self.ultimo_disparo = pygame.time.get_ticks()
+        #Resetear el click del mouse
+        if pygame.mouse.get_pressed()[0] == False:
+            self.disparada = False
+
+        return bala
+
+
     def rotar_arma(self, rotar):
         if rotar == True:
             imagen_flip = pygame.transform.flip(self.imagen_original, True, False)
@@ -44,4 +64,30 @@ class Weapon():
         interfaz.blit(self.imagen, self.forma )
         #pygame.draw.rect(interfaz, constantes.COLOR_ARMA, self.forma, 1)
 
+#Creación de clase Bullet
+class Bullet(pygame.sprite.Sprite):
+    def __init__(self, image, x, y, angle):
+        pygame.sprite.Sprite.__init__(self)
+        self.imagen_original = image
+        self.angulo = angle
+        self.image = pygame.transform.rotate(self.imagen_original, self.angulo)
+        self.rect = self.image.get_rect()
+        self.rect.center = (x, y)
+        #CÁLCULO DE LA VELOCIDAD DE LAS BALAS
+        self.delta_x = math.cos(math.radians(self.angulo)) * constantes.VELOCIDAD_BALA
+        self.delta_y = math.sin(math.radians(self.angulo)) * constantes.VELOCIDAD_BALA
 
+    def update(self):
+        self.rect.x += self.delta_x
+        self.rect.y = self.rect.y + self.delta_y
+
+
+        #Ver si las balas salieron de pantalla
+        if (self.rect.right < 0 or self.rect.left > constantes.ANCHO_VENTANA or self.rect.bottom <
+                0 or self.rect.top > constantes.ALTO_VENTANA):
+            self.kill()
+
+
+    def dibujar(self, interfaz):
+        interfaz.blit(self.image, (self.rect.centerx, self.rect.centery
+                      - int(self.image.get_height()/2)))

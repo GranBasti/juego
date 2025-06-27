@@ -37,6 +37,11 @@ imagen_shuriken = pygame.image.load(f"assets//images//weapons//01.png").convert_
 imagen_shuriken = escalar_img(imagen_shuriken, constantes.SCALA_ARMA)
 
 
+#Shuriken
+imagen_balas = pygame.image.load(f"assets//images//weapons//01.png").convert_alpha()
+imagen_balas = escalar_img(imagen_balas, constantes.SCALA_ARMA)
+
+
 player_image = pygame.image.load("assets/images/characters/player/Run_0.png")
 #Para scalar el Asset
 player_image = escalar_img(player_image, constantes.SCALA_PERSONAJE)
@@ -45,7 +50,10 @@ player_image = escalar_img(player_image, constantes.SCALA_PERSONAJE)
 jugador = Personaje(50,50, animaciones)
 
 #Crear un arma de la clase Weapon
-shuriken = Weapon(imagen_shuriken)
+shuriken = Weapon(imagen_shuriken, imagen_balas)
+
+#Crear un grupo de sprites
+grupo_balas = pygame.sprite.Group()
 
 
 #Definir las variable de movimiento del jugador
@@ -90,13 +98,23 @@ while run:
     jugador.update()
 
     #Actualizar el estado del arma
-    shuriken.update(jugador)
+    bala = shuriken.update(jugador)
+    if bala:
+        grupo_balas.add(bala)
+    for bala in grupo_balas:
+        bala.update()
+
+    #print(grupo_balas)
 
     #Dibujar al jugador
     jugador.dibujar(ventana)
 
     #Dibujar el arma
     shuriken.dibujar(ventana)
+
+    #Dibujar balas
+    for bala in grupo_balas:
+        bala.dibujar(ventana)
 
     for event in pygame.event.get():
         #Para cerrar el juego
