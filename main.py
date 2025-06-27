@@ -4,6 +4,7 @@ import constantes
 from personaje import Personaje
 from weapon import Weapon
 import os
+from textos import DamageText
 
 #Funciones
 
@@ -22,6 +23,10 @@ ventana = pygame.display.set_mode((constantes.ANCHO_VENTANA,
 
 #Cambiar el nombre de la ventana
 pygame.display.set_caption("Mi primer juego")
+
+#Fuentes
+font = pygame.font.Font("assets//fonts//monogram.ttf", 25)
+
 
 def escalar_img(image, scale):
     w = image.get_width()
@@ -109,8 +114,12 @@ lista_enemigos.append(freezer)
 shuriken = Weapon(imagen_shuriken, imagen_balas)
 
 #Crear un grupo de sprites
+grupo_damage_text = pygame.sprite.Group()
 grupo_balas = pygame.sprite.Group()
 
+#temporal y borrar
+#damage_text = DamageText(100, 240, "25", font, constantes.ROJO)
+#grupo_damage_text.add(damage_text)
 
 #Definir las variable de movimiento del jugador
 mover_arriba = False
@@ -163,7 +172,13 @@ while run:
     if bala:
         grupo_balas.add(bala)
     for bala in grupo_balas:
-        bala.update(lista_enemigos)
+        damage, pos_damage = bala.update(lista_enemigos)
+        if damage:
+            damage_text = DamageText(pos_damage.centerx, pos_damage.centery, str(damage), font, constantes.ROJO)
+            grupo_damage_text.add(damage_text)
+
+    #Actualizar daño
+    grupo_damage_text.update()
 
     #print(grupo_balas)
 
@@ -180,6 +195,9 @@ while run:
     #Dibujar balas
     for bala in grupo_balas:
         bala.dibujar(ventana)
+
+    #Dibujar textos
+    grupo_damage_text.draw(ventana)
 
     for event in pygame.event.get():
         #Para cerrar el juego
