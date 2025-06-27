@@ -3,6 +3,13 @@ import pygame
 import constantes
 from personaje import Personaje
 from weapon import Weapon
+import os
+
+#Funciones
+
+#Escalar imagen
+
+
 
 pygame.init()
 
@@ -22,6 +29,18 @@ def escalar_img(image, scale):
     nueva_imagen = pygame.transform.scale(image, (w*scale, h*scale))
     return nueva_imagen
 
+#Función contar elementos
+def contar_elementos(directorio):
+    return len(os.listdir(directorio))
+#print(os.listdir("assets/images/characters/enemies/demon"))
+
+
+#Listar nombre elementos
+def nombres_carpetas(directorio):
+    return os.listdir(directorio)
+#print(nombres_carpetas("assets/images/characters/enemies"))
+
+
 
 #Importar imagenes
 
@@ -31,6 +50,30 @@ for i in range (8):
     img = pygame.image.load(f"assets//images//characters//player//Run_{i}.png").convert_alpha()
     ima = escalar_img(img, constantes.SCALA_PERSONAJE)
     animaciones.append(img)
+
+#enemies
+#Contar enemigos
+directorio_enemigos = "assets//images//characters//enemies"
+tipo_enemigos = nombres_carpetas(directorio_enemigos)
+#print(f"enemigos:{tipo_enemigos}")
+
+
+animaciones_enemigos = []
+for eni in tipo_enemigos:
+    lista_temp = []
+    ruta_temp = f"assets//images//characters//enemies//{eni}"
+    num_animaciones = contar_elementos(ruta_temp)
+    #print (f"número de img: {num_animaciones}")
+
+    for i in range(num_animaciones):
+        img_enemigo = pygame.image.load(f"{ruta_temp}//{eni}_{i++1}.png").convert_alpha()
+        img_enemigo = escalar_img(img_enemigo, constantes.SCALA_ENEMIGOS)
+        lista_temp.append(img_enemigo)
+    animaciones_enemigos.append(lista_temp)
+#print(animaciones_enemigos)
+
+
+#print(tipo_enemigos)
 
 #Arma
 imagen_shuriken = pygame.image.load(f"assets//images//weapons//01.png").convert_alpha()
@@ -48,6 +91,17 @@ player_image = escalar_img(player_image, constantes.SCALA_PERSONAJE)
 
 #Crear un jugador de la clase Personaje
 jugador = Personaje(50,50, animaciones)
+
+#Crear un enemigo de la clase Personaje
+demon = Personaje(200, 200, animaciones_enemigos[0])
+demon_2 = Personaje(400, 400, animaciones_enemigos[0])
+
+#Crear lista de enemigos
+lista_enemigos = []
+lista_enemigos.append(demon)
+lista_enemigos.append(demon_2)
+#print(lista_enemigos)
+
 
 #Crear un arma de la clase Weapon
 shuriken = Weapon(imagen_shuriken, imagen_balas)
@@ -97,6 +151,11 @@ while run:
     #Actualiza el estado jugador
     jugador.update()
 
+    #Actualiza el estado del enemigo
+    for ene in lista_enemigos:
+        ene.update()
+
+
     #Actualizar el estado del arma
     bala = shuriken.update(jugador)
     if bala:
@@ -108,6 +167,10 @@ while run:
 
     #Dibujar al jugador
     jugador.dibujar(ventana)
+
+    #Dibujar al enemigo
+    for ene in lista_enemigos:
+        ene.dibujar(ventana)
 
     #Dibujar el arma
     shuriken.dibujar(ventana)
