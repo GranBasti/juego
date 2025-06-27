@@ -5,7 +5,9 @@ import constantes
 
 
 class Personaje():
-    def __init__(self, x, y, animaciones):
+    def __init__(self, x, y, animaciones, energia):
+        self.energia = energia
+        self.vivo = True
         self.flip = False #Para voltear al jugador
         self.animaciones = animaciones
 
@@ -30,6 +32,11 @@ class Personaje():
 
     #Metodo en milisegundos de cooldown
     def update(self):
+        #Comprobar si el personaje ha muerto
+        if self.energia <= 0:
+            self.energia = 0
+            self.vivo = False
+
         cooldown_animacion = 100
         self.image = self.animaciones[self.frame_index]
         if pygame.time.get_ticks() - self.update_time >=cooldown_animacion:

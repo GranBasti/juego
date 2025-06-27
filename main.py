@@ -66,7 +66,7 @@ for eni in tipo_enemigos:
     #print (f"número de img: {num_animaciones}")
 
     for i in range(num_animaciones):
-        img_enemigo = pygame.image.load(f"{ruta_temp}//{eni}_{i++1}.png").convert_alpha()
+        img_enemigo = pygame.image.load(f"{ruta_temp}//{eni}_{i+1}.png").convert_alpha()
         img_enemigo = escalar_img(img_enemigo, constantes.SCALA_ENEMIGOS)
         lista_temp.append(img_enemigo)
     animaciones_enemigos.append(lista_temp)
@@ -90,16 +90,18 @@ player_image = pygame.image.load("assets/images/characters/player/Run_0.png")
 player_image = escalar_img(player_image, constantes.SCALA_PERSONAJE)
 
 #Crear un jugador de la clase Personaje
-jugador = Personaje(50,50, animaciones)
+jugador = Personaje(50,50, animaciones, 100)
 
 #Crear un enemigo de la clase Personaje
-demon = Personaje(200, 200, animaciones_enemigos[0])
-demon_2 = Personaje(400, 400, animaciones_enemigos[0])
+demon = Personaje(200, 200, animaciones_enemigos[0], 100)
+demon_2 = Personaje(400, 400, animaciones_enemigos[0], 100)
+freezer = Personaje(40, 40, animaciones_enemigos[1], 200)
 
 #Crear lista de enemigos
 lista_enemigos = []
 lista_enemigos.append(demon)
 lista_enemigos.append(demon_2)
+lista_enemigos.append(freezer)
 #print(lista_enemigos)
 
 
@@ -154,14 +156,14 @@ while run:
     #Actualiza el estado del enemigo
     for ene in lista_enemigos:
         ene.update()
-
+        print (ene.energia)
 
     #Actualizar el estado del arma
     bala = shuriken.update(jugador)
     if bala:
         grupo_balas.add(bala)
     for bala in grupo_balas:
-        bala.update()
+        bala.update(lista_enemigos)
 
     #print(grupo_balas)
 
