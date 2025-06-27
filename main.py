@@ -48,6 +48,13 @@ def nombres_carpetas(directorio):
 
 
 #Importar imagenes
+#Energía
+corazon_vacio = pygame.image.load("assets//images//items//Heart_3.png").convert_alpha()
+corazon_vacio = escalar_img(corazon_vacio, constantes.SCALA_CORAZON)
+corazon_mitad = pygame.image.load("assets//images//items//Heart_2.png").convert_alpha()
+corazon_mitad = escalar_img(corazon_mitad, constantes.SCALA_CORAZON)
+corazon_lleno = pygame.image.load("assets//images//items//Heart_1.png").convert_alpha()
+corazon_lleno = escalar_img(corazon_lleno, constantes.SCALA_CORAZON)
 
 #Personaje
 animaciones = []
@@ -94,6 +101,18 @@ player_image = pygame.image.load("assets/images/characters/player/Run_0.png")
 #Para scalar el Asset
 player_image = escalar_img(player_image, constantes.SCALA_PERSONAJE)
 
+def vida_jugador():
+    c_mitad_dibujado = False
+    for i in range(4):
+        if jugador.energia >= ((i+1)*25):
+            ventana.blit(corazon_lleno, (5+i*50,5))
+        elif jugador.energia % 25 > 0 and c_mitad_dibujado == False:
+            ventana.blit(corazon_mitad,(5+i*50,5))
+            c_mitad_dibujado = True
+        else:
+            ventana.blit(corazon_vacio, (5+i*50,5))
+
+
 #Crear un jugador de la clase Personaje
 jugador = Personaje(50,50, animaciones, 100)
 
@@ -101,6 +120,7 @@ jugador = Personaje(50,50, animaciones, 100)
 demon = Personaje(200, 200, animaciones_enemigos[0], 100)
 demon_2 = Personaje(400, 400, animaciones_enemigos[0], 100)
 freezer = Personaje(40, 40, animaciones_enemigos[1], 200)
+
 
 #Crear lista de enemigos
 lista_enemigos = []
@@ -165,7 +185,7 @@ while run:
     #Actualiza el estado del enemigo
     for ene in lista_enemigos:
         ene.update()
-        print (ene.energia)
+        #print (ene.energia)
 
     #Actualizar el estado del arma
     bala = shuriken.update(jugador)
@@ -195,6 +215,9 @@ while run:
     #Dibujar balas
     for bala in grupo_balas:
         bala.dibujar(ventana)
+
+    #Dibujar los corazones
+    vida_jugador()
 
     #Dibujar textos
     grupo_damage_text.draw(ventana)
