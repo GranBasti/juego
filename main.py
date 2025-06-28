@@ -5,6 +5,7 @@ from personaje import Personaje
 from weapon import Weapon
 import os
 from textos import DamageText
+from items import Item
 
 #Funciones
 
@@ -96,6 +97,19 @@ imagen_shuriken = escalar_img(imagen_shuriken, constantes.SCALA_ARMA)
 imagen_balas = pygame.image.load(f"assets//images//weapons//01.png").convert_alpha()
 imagen_balas = escalar_img(imagen_balas, constantes.SCALA_ARMA)
 
+#Cargar imagen de los items
+pocion_turquesa = pygame.image.load("assets/images/items/Potion.png")
+pocion_turquesa = escalar_img(pocion_turquesa, 1)
+
+coin_images = []
+ruta_img = "assets//images//items//coin"
+num_coin_images = contar_elementos(ruta_img)
+#print (f"número de imagenes de monedas: {num_coin_images}")
+for i in range(num_coin_images):
+    img = pygame.image.load(f"assets//images//items//coin//coin_{i+1}.png")
+    img = escalar_img(img, 1)
+    coin_images.append(img)
+
 
 player_image = pygame.image.load("assets/images/characters/player/Run_0.png")
 #Para scalar el Asset
@@ -136,6 +150,14 @@ shuriken = Weapon(imagen_shuriken, imagen_balas)
 #Crear un grupo de sprites
 grupo_damage_text = pygame.sprite.Group()
 grupo_balas = pygame.sprite.Group()
+grupo_items = pygame.sprite.Group()
+
+coin = Item(350, 25, 0, coin_images)
+potion = Item(380, 55, 1, [pocion_turquesa])
+
+grupo_items.add(coin)
+grupo_items.add(potion)
+
 
 #temporal y borrar
 #damage_text = DamageText(100, 240, "25", font, constantes.ROJO)
@@ -200,6 +222,10 @@ while run:
     #Actualizar daño
     grupo_damage_text.update()
 
+
+    #Actualizar items
+    grupo_items.update()
+
     #print(grupo_balas)
 
     #Dibujar al jugador
@@ -221,6 +247,9 @@ while run:
 
     #Dibujar textos
     grupo_damage_text.draw(ventana)
+
+    # dibujar items
+    grupo_items.draw(ventana)
 
     for event in pygame.event.get():
         #Para cerrar el juego
