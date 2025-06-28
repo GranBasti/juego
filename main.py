@@ -110,6 +110,9 @@ for i in range(num_coin_images):
     img = escalar_img(img, 1)
     coin_images.append(img)
 
+def dibujar_texto(texto, fuente, color, x, y):
+    img = fuente.render(texto, True, color)
+    ventana.blit(img, (x, y))
 
 player_image = pygame.image.load("assets/images/characters/player/Run_0.png")
 #Para scalar el Asset
@@ -128,7 +131,7 @@ def vida_jugador():
 
 
 #Crear un jugador de la clase Personaje
-jugador = Personaje(50,50, animaciones, 100)
+jugador = Personaje(50,50, animaciones, 70)
 
 #Crear un enemigo de la clase Personaje
 demon = Personaje(200, 200, animaciones_enemigos[0], 100)
@@ -224,7 +227,7 @@ while run:
 
 
     #Actualizar items
-    grupo_items.update()
+    grupo_items.update(jugador)
 
     #print(grupo_balas)
 
@@ -247,6 +250,7 @@ while run:
 
     #Dibujar textos
     grupo_damage_text.draw(ventana)
+    dibujar_texto(f"Score: {jugador.score}", font, (255,255,0), 700, 5)
 
     # dibujar items
     grupo_items.draw(ventana)
