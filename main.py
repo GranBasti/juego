@@ -6,6 +6,7 @@ from weapon import Weapon
 import os
 from textos import DamageText
 from items import Item
+from mundo import Mundo
 
 #Funciones
 
@@ -97,6 +98,13 @@ imagen_shuriken = escalar_img(imagen_shuriken, constantes.SCALA_ARMA)
 imagen_balas = pygame.image.load(f"assets//images//weapons//01.png").convert_alpha()
 imagen_balas = escalar_img(imagen_balas, constantes.SCALA_ARMA)
 
+#Cargar imagenes del mundo
+tile_list = []
+for x in range(constantes.TILE_TYPES):
+    tile_image = pygame.image.load(f"assets//images//tiles//Rock_{x+1}.png")
+    tile_image = pygame.transform.scale(tile_image, (constantes.TILE_SIZE, constantes.TILE_SIZE))
+    tile_list.append(tile_image)
+
 #Cargar imagen de los items
 pocion_turquesa = pygame.image.load("assets/images/items/Potion.png")
 pocion_turquesa = escalar_img(pocion_turquesa, 1)
@@ -129,6 +137,25 @@ def vida_jugador():
         else:
             ventana.blit(corazon_vacio, (5+i*50,5))
 
+world_data = [
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+]
+
+world = Mundo()
+world.process_data(world_data, tile_list)
+
+
+def dibujar_grid():
+    for x in range(30):
+        pygame.draw.line(ventana, constantes.BLANCO, (x*constantes.TILE_SIZE, 0),(x*constantes.TILE_SIZE, constantes.ALTO_VENTANA))
+        pygame.draw.line(ventana, constantes.BLANCO, (0, x * constantes.TILE_SIZE), (constantes.ANCHO_VENTANA, x*constantes.TILE_SIZE))
 
 #Crear un jugador de la clase Personaje
 jugador = Personaje(50,50, animaciones, 70)
@@ -187,6 +214,7 @@ while run:
 
     ventana.fill(constantes.COLOR_BG)
 
+    dibujar_grid()
     #Calcular el movimiento del jugador
     delta_x = 0
     delta_y = 0
@@ -229,12 +257,15 @@ while run:
     #Actualizar items
     grupo_items.update(jugador)
 
+    #Dibujar mundo
+    world.draw(ventana)
+
     #print(grupo_balas)
 
     #Dibujar al jugador
     jugador.dibujar(ventana)
 
-    #Dibujar al enemigo
+    #Dibujar al enemigos
     for ene in lista_enemigos:
         ene.dibujar(ventana)
 
